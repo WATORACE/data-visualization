@@ -40,3 +40,12 @@
 .error-message {
   color: red;
 }
+
+#raw-config {
+  width: 80%;
+  height: 30rem;
+}
+
+.Content {
+  padding-bottom: 5rem;
+}
