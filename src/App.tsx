@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Papa, {ParseResult as PapaParseResult} from 'papaparse';
 import uPlot from 'uplot';
+import 'uplot/dist/uPlot.min.css';
 
 function App() {
   const fileInput = useRef(null as (HTMLInputElement|null));
@@ -17,19 +18,25 @@ function App() {
     const idx = 0
     const dataset = datasets[idx];
     const data = [];
-    data[0] = dataset.parsed.data.map(row => (row as any).TimeOfUpdate);
-    data[1] = dataset.parsed.data.map(row => (row as any).SteeringWheelAngle);
+    data[0] = dataset.parsed.data.map(row => +(row as any).TimeOfUpdate);
+    data[1] = dataset.parsed.data.map(row => +(row as any).SteeringWheelAngle);
 
     const opts = {
-					title: "Steering over time",
+					title: "Steering over time (rad)",
 					width: 1920,
-					height: 600,
+          height: 600,
+          scales: {
+            x: {
+              time: false
+            }
+          },
 					series: [
-						{},
 						{
-							label: "CPU",
-							scale: "%",
-							value: (u: any, v: any) => v,
+              label: "time (s)"
+            },
+						{
+							label: "Steering Wheel Angle (rad)",
+							value: (self: any, rawValue: any) => rawValue.toFixed(2),
 							stroke: "red",
 							width: 1/devicePixelRatio,
 						},
@@ -37,8 +44,7 @@ function App() {
 					axes: [
 						{},
 						{
-							scale: "%",
-							values: (u: any, vals: Array<number>, space: any) => vals.map(v => +v.toFixed(1) + "%"),
+							values: (u: any, vals: Array<number>, space: any) => vals.map(v => +v.toFixed(2)),
 						},
 					],
         };
@@ -46,7 +52,8 @@ function App() {
         const plotContainer = document.getElementById(`plot-${idx}`);
 
         if (!plotContainer) {
-          setErrorMsgs(existingMsgs => [...existingMsgs, `Plot container not found for plot-${idx}`]);
+          // TODO: Fix react error when using setErrorMsgs in effect
+          // setErrorMsgs(existingMsgs => [...existingMsgs, `Plot container not found for plot-${idx}`]);
           return;
         }
 
@@ -98,13 +105,6 @@ function App() {
         </ol>
         <input type="file" ref={fileInput} multiple />
         <button onClick={handleAddDataset}>Add Dataset</button>
-        { datasets.map((dataset, idx) => (
-            <div key={idx}>
-              <p>{dataset.file?.name}</p>
-              <div id={`plot-${idx}`}/>
-            </div>
-          ))
-        }
         <a
           className="App-link"
           href="https://reactjs.org"
@@ -114,6 +114,13 @@ function App() {
           Learn React
         </a>
       </header>
+      { datasets.map((dataset, idx) => (
+          <div key={idx}>
+            <p>{dataset.file?.name}</p>
+            <div id={`plot-${idx}`}/>
+          </div>
+        ))
+      }
     </div>
   );
 }
