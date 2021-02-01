@@ -4,7 +4,12 @@ Data visualization tool for WATORACE
 
 ![website screenshot](.github/assets/screenshot.png)
 
-This tool is created with [Create React App](https://create-react-app.dev/).
+Planned features:
+- [x] Import data (csv) and visualize graphs (achieved using [Papa Parse][PapaParse] and [uPlot][uPlot])
+- [x] Synchronized cursors and zoom (achieved using [uPlot][uPlot])
+- [ ] Support transforms (e.g. degrees<->radians)
+- [ ] UI for constructing visualizations (this is currently achieved by editing the JSON on the "Raw Configuration" page)
+- [x] Import/export configurations (achieved using the "Raw Configuration" section)
 
 ## Getting Started with Create React App
 
@@ -52,3 +57,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+[uPlot]: https://github.com/leeoniya/uPlot
+[PapaParse]: https://github.com/leeoniya/uPlot
