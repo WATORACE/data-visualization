@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import logo from "./logo.svg";
 import "./App.css";
 import Papa, { ParseResult as PapaParseResult } from "papaparse";
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
-import { deepCopy } from "./utils";
-import _ from "lodash";
+import { Table, Container, Modal, Button } from "react-bootstrap";
+import FilterList from "./FilterList";
 
 function App() {
     const fileInput = useRef(null as HTMLInputElement | null);
@@ -55,13 +56,13 @@ function App() {
                     data: "0.TimeOfUpdate",
                 },
                 {
-                    label: "cdgSpeed_x",
+                    label: "cdgSpeed_x (m/s)",
                     stroke: "blue",
                     width: 1,
                     data: "0.cdgSpeed_x",
                 },
                 {
-                    label: "cdgSpeed_y",
+                    label: "cdgSpeed_y (m/s)",
                     stroke: "green",
                     width: 1,
                     data: "0.cdgSpeed_y",
@@ -69,6 +70,8 @@ function App() {
             ],
         },
     ]);
+
+    const [datasetModalID, setDatasetModalID] = useState(-1);
 
     // plot datasets on change (rerender of the react component)
     useEffect(() => {
@@ -83,7 +86,6 @@ function App() {
             const { title, inputs, cursor, height } = visualization;
             const data = []; // uPlot data
             const series = []; // uPlot series
-            console.log("Processing visualization", i);
             for (let j = 0; j < inputs.length; ++j) {
                 const { data: dataPathStr, width, ...otherInputs } = inputs[j];
                 const dataPath = dataPathStr.split(".");
@@ -153,7 +155,7 @@ function App() {
                         ...existingMsgs,
                         `Error parsing "${file?.name}". Reason: ${err.message}. Please see console for more details.`,
                     ]);
-                    console.error(err, file);
+                    console.error(`Error Parsing ${file?.name}! Error:`, err, "file:", file);
                 },
                 complete: function parsingComplete(results, file) {
                     if (results.errors.length) {
@@ -202,38 +204,65 @@ function App() {
     return (
         <div className="App">
             <div className="Content">
-                <h1>WATORACE Data Visualizer</h1>
-                {errorMsgs.map((msg, idx) => (
-                    <p key={idx} className="error-message">
-                        {msg}
+                <Container>
+                    <h1>WATORACE Data Visualizer</h1>
+                    <p>This is pre-alpha software.</p>
+                    <p>
+                        Select a vehicleOutput csv and click "Add Dataset" to view the current
+                        functionalities. You can safely ignore the initial errors due to dataset 0
+                        being not available.
                     </p>
-                ))}
-                <p>{datasets.length} Dataset(s)</p>
-                <ol start={0}>
-                    {datasets.map((dataset, idx) => (
-                        <li key={idx}>{dataset.file?.name}</li>
+                    {errorMsgs.map((msg, idx) => (
+                        <p key={idx} className="error-message">
+                            {msg}
+                        </p>
                     ))}
-                </ol>
-                <input type="file" ref={fileInput} multiple />
-                <button onClick={handleAddDataset}>Add Dataset</button>
+                    <p>{datasets.length} Dataset(s)</p>
+                    <Table bordered hover striped>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Dataset Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {datasets.map((dataset, idx) => (
+                                <tr>
+                                    <td className="align-middle">{idx}</td>
+                                    <td className="align-middle">{dataset.file?.name}</td>
+                                    <td>
+                                        <Button size="sm" onClick={() => setDatasetModalID(idx)}>
+                                            More Info
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                    <input type="file" ref={fileInput} multiple />
+                    <button onClick={handleAddDataset}>Add Dataset</button>
+                </Container>
                 {visualizations.map((visualization, idx) => (
                     <div key={idx} className="plot">
                         <div id={`plot-${idx}`} />
                     </div>
                 ))}
 
-                <h2>Raw Configuration</h2>
-                <p>
-                    This <code>textarea </code> contains the raw configuration that generates the
-                    graphs above. You can copy the text below and share with others. You can also
-                    apply new configurations by replacing the text below and clicking "Apply
-                    configuration".
-                </p>
-                <textarea id="raw-config" ref={rawConfig}>
-                    {JSON.stringify({ visualizations }, null, 2)}
-                </textarea>
-                <br />
-                <button onClick={handleApplyRawConfig}>Apply Configuration</button>
+                <Container>
+                    <h2>Raw Configuration</h2>
+                    <p>
+                        This <code>&lt;textarea/&gt;</code> contains the raw configuration that
+                        generates the graphs above. You can copy the text below and share with
+                        others. You can also apply new configurations by replacing the text below
+                        and clicking "Apply configuration".
+                    </p>
+                    <textarea id="raw-config" ref={rawConfig}>
+                        {JSON.stringify({ visualizations }, null, 4)}
+                    </textarea>
+                    <br />
+                    <button onClick={handleApplyRawConfig}>Apply Configuration</button>
+                </Container>
             </div>
 
             <header className="App-header">
@@ -251,6 +280,28 @@ function App() {
                     Learn React
                 </a>
             </header>
+
+            <Modal
+                show={datasetModalID >= 0}
+                onHide={() => setDatasetModalID(-1)}
+                dialogClassName="dataset-modal"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>{datasets[datasetModalID]?.file?.name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Fields:
+                    <FilterList
+                        list={datasets[datasetModalID]?.parsed.meta.fields || []}
+                        height="60vh"
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setDatasetModalID(-1)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
