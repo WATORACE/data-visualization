@@ -211,9 +211,9 @@ function App() {
                         <a href="https://github.com/WATORACE/data-visualization">Github repo</a>).
                     </p>
                     <p>
-                        Select a vehicleOutput csv and click "Add Dataset" to view the current
-                        functionalities. You can safely ignore the initial errors due to dataset 0
-                        being not available.
+                        Select a <code>vehicleOutput</code> csv and click "Add Dataset" to view the
+                        current functionalities. You can safely ignore the initial errors due to
+                        dataset 0 being not available.
                     </p>
                     {errorMsgs.map((msg, idx) => (
                         <p key={idx} className="error-message">
