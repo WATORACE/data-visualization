@@ -59,4 +59,4 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 To learn React, check out the [React documentation](https://reactjs.org/).
 
 [uPlot]: https://github.com/leeoniya/uPlot
-[PapaParse]: https://github.com/leeoniya/uPlot
+[PapaParse]: https://www.papaparse.com/
