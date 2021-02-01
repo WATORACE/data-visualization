@@ -206,7 +206,10 @@ function App() {
             <div className="Content">
                 <Container>
                     <h1>WATORACE Data Visualizer</h1>
-                    <p>This is pre-alpha software.</p>
+                    <p>
+                        This is pre-alpha software (
+                        <a href="https://github.com/WATORACE/data-visualization">Github repo</a>).
+                    </p>
                     <p>
                         Select a vehicleOutput csv and click "Add Dataset" to view the current
                         functionalities. You can safely ignore the initial errors due to dataset 0
