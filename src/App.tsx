@@ -217,8 +217,7 @@ function App() {
                 <input type="file" ref={fileInput} multiple />
                 <button onClick={handleAddDataset}>Add Dataset</button>
                 {visualizations.map((visualization, idx) => (
-                    <div key={idx}>
-                        <p>{visualization.title}</p>
+                    <div key={idx} className="plot">
                         <div id={`plot-${idx}`} />
                     </div>
                 ))}
