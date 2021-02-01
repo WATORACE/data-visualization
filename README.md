@@ -10,6 +10,7 @@ Planned features:
 - [ ] Support transforms (e.g. degrees<->radians)
 - [ ] UI for constructing visualizations (this is currently achieved by editing the JSON on the "Raw Configuration" page)
 - [x] Import/export configurations (achieved using the "Raw Configuration" section)
+- [ ] Import data via URL (supported natively in Papa Parse, but we need to make a few adjustments to code that rely on having a file name). Depends on making our data pipeline publicly accessible.
 
 ## Getting Started with Create React App
 
