@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import logo from "./logo.svg";
 import "./App.css";
 import Papa, { ParseResult as PapaParseResult } from "papaparse";
 import uPlot from "uplot";
@@ -75,7 +74,7 @@ function App() {
 
     // plot datasets on change (rerender of the react component)
     useEffect(() => {
-        if (visualizations.length === 0) {
+        if (visualizations.length === 0 || datasets.length === 0) {
             return;
         }
 
@@ -129,6 +128,7 @@ function App() {
                 return;
             }
 
+            // @ts-ignore
             plots.push(new uPlot(opts, data, plotContainer));
         }
 
@@ -231,7 +231,7 @@ function App() {
                         </thead>
                         <tbody>
                             {datasets.map((dataset, idx) => (
-                                <tr>
+                                <tr key="idx">
                                     <td className="align-middle">{idx}</td>
                                     <td className="align-middle">{dataset.file?.name}</td>
                                     <td>
@@ -267,23 +267,6 @@ function App() {
                     <button onClick={handleApplyRawConfig}>Apply Configuration</button>
                 </Container>
             </div>
-
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>WATORACE Data Visualizer</p>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
-            </header>
-
             <Modal
                 show={datasetModalID >= 0}
                 onHide={() => setDatasetModalID(-1)}
